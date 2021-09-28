@@ -16,10 +16,29 @@ _bot.on('messageCreate', handleMessageCreate);
 // start
 _bot.login(_cfg.token);
 
-function handleMessageCreate(msg) {
-    if (botMentioned(msg)) {
-        msg.reply('You said: ' + msg.content);
+async function handleMessageCreate(msg) {
+    // ignore a bot reply
+    if (isBotReply(msg)) {
+        return;
     }
+
+    // ignore if we haven't been mentioned and we aren't in a dedicated channel
+    if (!wasBotMentioned(msg) && msg.channel.name != _cfg.channel_name) {
+        _logger.Warning.Async('Message ignored', 'Bot not mentioned');
+        return;
+    }
+
+    // let's go
+    var command = removeMentionFromMsg(msg);
+    _logger.Info.Async(msg.author.username + ' sent a command', command);
+
+    await _assistant.Send(command)
+        .then((res) => {
+            msg.reply(res);
+        })
+        .catch((err) => {
+            msg.reply(err);
+        });
 }
 
 function handleReady() {
@@ -27,8 +46,17 @@ function handleReady() {
     _logger.Info.Async('Logged in', 'User: ' + _bot.user.tag);
 }
 
-function botMentioned(msg) {
+function wasBotMentioned(msg) {
     return msg.content.startsWith('<@') && msg.content.includes(_bot.user.id);
+}
+
+function isBotReply(msg) {
+    return msg.author.id == _bot.user.id;
+}
+
+function removeMentionFromMsg(msg) {
+    msg = msg.content.slice(msg.content.indexOf('>') + 1)
+    return msg.trim();
 }
 
 function readJson(filePath) {
