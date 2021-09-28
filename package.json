@@ -1,0 +1,16 @@
+{
+  "name": "Discord-GoogleAssistant-Bot",
+  "version": "1.0.0",
+  "description": "Discord bot that uses the REST-GoogleAssistant-Client submodule",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-personal:thomasnorris/Discord-GoogleAssistant-Bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
